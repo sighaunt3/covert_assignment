@@ -43,6 +43,7 @@ Limit: 1
         last_time = 0
         
         def process_packet(packet):
+            nonlocal last_time
             current_time = packet.time
             difference = current_time - last_time
             if threshold_0_min < difference < threshold_0_max:

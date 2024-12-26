@@ -17,6 +17,8 @@
   "receive": {
     "parameters": {
       "log_file_name": "receiver.log",
+      "src_ip": "172.18.0.2",
+      "dst_ip": "172.18.0.3",
       "port": 8000,
       "threshold_0_min": 0.1,
       "threshold_0_max": 0.2,

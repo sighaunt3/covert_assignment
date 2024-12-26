@@ -3,8 +3,6 @@ import random
 from scapy.all import IP, TCP, sniff
 from CovertChannelBase import CovertChannelBase
 
-send_time = 0  # Global variable to store send time
-
 class MyCovertChannel(CovertChannelBase):
     """
     Covert Timing Channel that exploits Idle Period Between Packet Bursts using TCP [Code: CTC-IPPB-TCP]
@@ -40,7 +38,6 @@ class MyCovertChannel(CovertChannelBase):
                 print(f"Bit is 0, sleeping for {delay:.2f} milliseconds")
 
     def receive(self, log_file_name, src_ip, dst_ip, port, threshold_0_min, threshold_0_max, threshold_1_min, threshold_1_max):
-        global send_time  # Use the global send_time variable
         packets = []
         last_time = 0
 
@@ -52,7 +49,7 @@ class MyCovertChannel(CovertChannelBase):
                     last_time = current_time
                     print(f"Packet time: {current_time:.5f}")  # Debugging line to check the first packet time
                     return
-                difference = (current_time - last_time) - (send_time / 1000)  # Convert send_time to seconds
+                difference = current_time - last_time  # Convert send_time to seconds
                 print(f"Packet time: {current_time:.5f}, Last time: {last_time:.5f}, Difference: {difference:.5f} seconds")  # Debugging line to check timing differences
                 if threshold_0_min < difference < threshold_0_max:
                     packets.append('0')

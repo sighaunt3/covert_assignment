@@ -1,18 +1,27 @@
 {
-  "covert_channel_code": "Replace it with the [Code] of chosen covert channel type seen in ODTUClass.",
+  "covert_channel_code": "CTC-IPPB-TCP",
   "send": {
     "parameters": {
-      "parameter1": "p1",
-      "parameter2": 1234,
-      "log_file_name": "Example_UDPTimingInterarrivalChannelSender.log"
+      "log_file_name": "sender.log",
+      "src_ip": "172.18.0.2",
+      "dst_ip": "172.18.0.3",
+      "dst_port": 8000,
+      "min_packets": 2,
+      "max_packets": 4,
+      "delay_0_min": 250.0,
+      "delay_0_max": 300.0,
+      "delay_1_min": 600.0,
+      "delay_1_max": 650.0
     }
   },
   "receive": {
     "parameters": {
-      "parameter1": "p1",
-      "parameter2": 1234,
-      "parameter3": "p3",
-      "log_file_name": "Example_UDPTimingInterarrivalChannelReceiver.log"
+      "log_file_name": "receiver.log",
+      "port": 8000,
+      "threshold_0_min": 0.250,
+      "threshold_0_max": 0.550,
+      "threshold_1_min": 0.600,
+      "threshold_1_max": 0.900
     }
   }
 }

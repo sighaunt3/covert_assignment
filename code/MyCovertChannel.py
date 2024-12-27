@@ -1,6 +1,6 @@
 from CovertChannelBase import CovertChannelBase
 import random, time
-from scapy.all import IP, TCP, sniff
+from scapy.all import IP, TCP, sniff,send
 
 class MyCovertChannel(CovertChannelBase):
     
@@ -25,23 +25,29 @@ Limit: 1
         "creates random binary message and then goes through each bit of this message. For each bit it generates a random number of packets and sends them to receiver."
         "whether bit is 0 or 1 delay is changed of the burst therefore on receiver side we can understand if its 0 or 1 based on the delay"
         
-        binary_message = self.generate_random_binary_message_with_logging("log_file_name")
+        binary_message = self.generate_random_binary_message_with_logging("sender.log",16,32)
      
         start_time = time.time()
 
         for bit in binary_message:
             num_packets = self.random.randint(min_packets, max_packets)
             print(f"number of packets in burst: {num_packets}")
-
+            burst_packets = [] 
             for i in range(num_packets):
+                x = time.time()
                 packet = IP(src=src_ip, dst=dst_ip)/TCP(dport=dst_port)
-                super().send(packet)  #  send method from CovertChannelBase
+                print(time.time()-x)
+                burst_packets.append(packet)
+                 #  send method from CovertChannelBase
+            send(burst_packets,verbose =False)
             if bit == '1':
                 self.sleep_random_time_ms(delay_1_min, delay_1_max)
             elif bit == '0':
                 self.sleep_random_time_ms(delay_0_min, delay_0_max)
-            packet = IP(src=src_ip, dst=dst_ip)/TCP(dport=dst_port)
-            super().send(packet)  #  send method from CovertChannelBase
+            
+
+        packet = IP(src=src_ip, dst=dst_ip)/TCP(dport=dst_port)
+        super().send(packet)  #  send method from CovertChannelBase
         finish = time.time()
         print(len(binary_message)/(finish-start_time))
          

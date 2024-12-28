@@ -27,7 +27,7 @@ In this function, the sender encodes the binary message by varying the idle time
 - delay_0_max: The maximum delay (in seconds) between bursts representing a '1' bit.
 
 #### Process
-1. A binary message of length 128 bits is generated and logged to the sender.log file.
+1. A binary message of random is generated and logged to the sender.log file.
 2. The timer is started just before sending the first packet which will be used to calculate the bits per second of the implementation.
 3. For each bit in the binary message a random number of packets is generated based on the random library. The amount generated is based on the parameter min_packets and max_packets. For the number of packets determined a new packet is added to the packet_list. Once the number of packets determined has been achieved in the packet_list, these packets are sent together via the send method of CovertChannelBase class. If the bit is '0', the sender waits for a random delay_0_min to delay_0_max seconds before sending the next burst. If the bit is '1', the sender waits for a random delay_1_min to delay_1_max seconds before sending the next burst. This process is then repeated for each bit in binary_message. Once all bits have been traversed a dummy packet is sent out. The dummy packet is necessary as the receiver side functions by checking the delay from the current bit to the previous bit. In order for the terminating character '.' to be read there needs to be an extra packet received which allows for the comparison of the delay between the dummy bit and the last real bit allowing for the receiver to determine if its a 0 or 1.
 

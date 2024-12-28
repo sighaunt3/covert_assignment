@@ -24,21 +24,19 @@ Limit: 1
         """
         "creates random binary message and then goes through each bit of this message. For each bit it generates a random number of packets and sends them to receiver."
         "whether bit is 0 or 1 delay is changed of the burst therefore on receiver side we can understand if its 0 or 1 based on the delay"
+        "generates random number of packets for each bit and stores that many packets in the burst packets list once every packet is added to burst packet it sends it all together"
         
-        binary_message = self.generate_random_binary_message_with_logging("sender.log",16,32)
+        binary_message = self.generate_random_binary_message_with_logging("sender.log")
      
         start_time = time.time()
 
         for bit in binary_message:
             num_packets = self.random.randint(min_packets, max_packets)
-            print(f"number of packets in burst: {num_packets}")
             burst_packets = [] 
             for i in range(num_packets):
                 x = time.time()
                 packet = IP(src=src_ip, dst=dst_ip)/TCP(dport=dst_port)
-                print(time.time()-x)
                 burst_packets.append(packet)
-                 #  send method from CovertChannelBase
             send(burst_packets,verbose =False)
             if bit == '1':
                 self.sleep_random_time_ms(delay_1_min, delay_1_max)
@@ -46,13 +44,20 @@ Limit: 1
                 self.sleep_random_time_ms(delay_0_min, delay_0_max)
             
 
-        packet = IP(src=src_ip, dst=dst_ip)/TCP(dport=dst_port)
-        super().send(packet)  #  send method from CovertChannelBase
+        packet2 = IP(src=src_ip, dst=dst_ip)/TCP(dport=dst_port)
+        send(packet2)  #  send method from CovertChannelBase
         finish = time.time()
         print(len(binary_message)/(finish-start_time))
          
 
     def receive(self, log_file_name, port, threshold_0_min, threshold_0_max, threshold_1_min, threshold_1_max):
+        """
+    This function receives and decodes a covert message transmitted over a network using timing differences between packets.
+    - It captures packets on a specified port and processes them to determine if they represent a '0' or '1' based on timing thresholds.
+    - The function appends the decoded bits to a list and converts every 8 bits to a character.
+    - The process continues until a '.' character is detected, indicating the end of the message.
+    - The decoded message is then logged to a specified log file.
+    """
         packets = []
         global is_dot
         last_time = 0
@@ -64,35 +69,24 @@ Limit: 1
                 current_time = packet.time
                 if last_time == 0:
                     last_time = current_time
-                    print(f"Packet time: {current_time:.5f}")  
                     return
-                print(current_time-last_time)
                 
                 difference = (current_time - last_time)
-                print(f"Packet time: {current_time:.5f}, Last time: {last_time:.5f}, Difference: {difference:.5f} seconds") 
                 if threshold_0_min < difference < threshold_0_max:
                     packets.append('0')
                     last_time = current_time
-                    print("Appended 0")
-                    print(len(packets))
                     if(len(packets)== 8*self.i):
-                        print("YO")
                         message = ''.join(packets[8*(self.i-1):8*self.i])
                         packet_string1 = ''.join(self.convert_eight_bits_to_character(message))
-                        print(packet_string1)
                         self.i = self.i+1
                     if(packet_string1== '.'):
                         self.is_dot = True   
                 elif threshold_1_min < difference < threshold_1_max:
                     packets.append('1')
                     last_time = current_time
-                    print("Appended 1")
-                    print(len(packets))
                     if(len(packets)== 8*self.i):
-                        print("YO")
                         message = ''.join(packets[8*(self.i-1):8*self.i])
                         packet_string1 = ''.join(self.convert_eight_bits_to_character(message))
-                        print(packet_string1)
                         self.i = self.i+1
                     if(packet_string1== '.'):
                         self.is_dot = True 
@@ -108,7 +102,6 @@ Limit: 1
                 filter="tcp port 8000",
                 prn=process_packet,stop_filter= lambda packet: self.is_dot )
         
-        print("This line will only execute AFTER sniffing stops.") 
         binary_message = ''.join(packets)
 
         packet_string = ''.join(self.convert_eight_bits_to_character(binary_message[i:i+8]) for i in range(0, len(binary_message), 8))

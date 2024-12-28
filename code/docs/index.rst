@@ -9,6 +9,17 @@ Covert Channel documentation
 Please add your names, group ID, and your link to the forked public repository here by editing `index.rst` in the docs folder.
 
 
+Group id: 70
+
+Kaan Karakut
+
+Bartu Karalar
+
+https://github.com/sighaunt3/covert_assignment.git
+
+
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

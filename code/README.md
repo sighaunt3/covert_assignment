@@ -44,6 +44,8 @@ In this function, the receiver decodes the transferred message by analyzing the 
 #### Parameters
 - log_file_name: The name of the log file where the decoded message will be saved.
 - port: The destination port for the packets.
+- src_ip: The source IP address for the packets.
+- dst_ip: The destination port for the packets.
 - threshold_0_min: The minimum threshold (in seconds) for detecting a '0' bit.
 - threshold_0_max: The maximum threshold (in seconds) for detecting a '0' bit.
 - threshold_1_min: The minimum threshold (in seconds) for detecting a '1' bit.

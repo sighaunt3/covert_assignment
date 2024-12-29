@@ -25,8 +25,8 @@ In this function, the sender encodes the binary message by varying the idle time
 - delay_0_max: The maximum delay (in seconds) between bursts representing a '0' bit.
 - delay_1_min: The minimum delay (in seconds) between bursts representing a '1' bit.
 - delay_0_max: The maximum delay (in seconds) between bursts representing a '1' bit.
-- 0: representing the char 0.
-- 1: representing the char 1. 
+- 0: Representing the char 0.
+- 1: Representing the char 1. 
 
 #### Process
 1. A binary message of random is generated and logged to the sender.log file.
@@ -52,11 +52,10 @@ In this function, the receiver decodes the transferred message by analyzing the 
 - threshold_0_max: The maximum threshold (in seconds) for detecting a '0' bit.
 - threshold_1_min: The minimum threshold (in seconds) for detecting a '1' bit.
 - threshold_1_max: The maximum threshold (in seconds) for detecting a '1' bit.
-- "src_ip": "172.18.0.2", The source IP address for the packets.
-- "dst_ip": "172.18.0.3", The destination IP address for the packets.
-- zero: representing the char 0
-- one: representing the char 1
-- dot: representing the terminating char.
+- dot: Representing the terminating char.
+- zero: Representing the char 0.
+- one: Representing the char 1.
+
 
 #### Process
 1. *Initialize Variables*: Initialize variables to store the packets, the last packet time and a flag to indicate when the dot character is received.

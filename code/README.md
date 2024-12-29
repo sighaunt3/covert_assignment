@@ -46,8 +46,6 @@ In this function, the receiver decodes the transferred message by analyzing the 
 #### Parameters
 - log_file_name: The name of the log file where the decoded message will be saved.
 - port: The destination port for the packets.
-- src_ip: The source IP address for the packets.
-- dst_ip: The destination port for the packets.
 - threshold_0_min: The minimum threshold (in seconds) for detecting a '0' bit.
 - threshold_0_max: The maximum threshold (in seconds) for detecting a '0' bit.
 - threshold_1_min: The minimum threshold (in seconds) for detecting a '1' bit.
@@ -74,7 +72,7 @@ To measure the covert channel capacity, a binary message of length 128 bits (16 
 4. Calculate the time difference in seconds.
 5. Divide 128 by the calculated time in seconds to get the capacity in bits per second.
 
-The covert channel capacity is approximately *2.22 bits per second*.
+The covert channel capacity is approximately *2.30 bits per second*.
 
 ## Limitations
 - The minimum delay for sending a '0' bit is set to delay_0_min (0.23 seconds). While the maximum is set to delay_0_max (0.26 seconds).
@@ -85,7 +83,7 @@ The covert channel capacity is approximately *2.22 bits per second*.
 
 The minumum delay is set 0.23 seconds because from our observations there is a varying network delay in the implementation. This ranges from 0.07 to 0.22 seconds. To get around this and ensure consistency the minumum delay for sending a bit must be greater than the greatest amount of network delay in order to ensure the implementation doesn't confuse normal network delay with a packet indicating a 0 or 1. To get around this, all the delays imposed on this implementation are greater than the maximum network delay we observed. For the threshold side the thresholds have to account for the delay_0_max or delay_1_max + the maximum amount of network delay. As network delay can occur while sending the packet indicating a 0 or 1. In order to not lose data in this case the thresholds have been accounted for accordingly.
 
-We set the minimum delay for 0 bit as 0.23 seconds as this is the lowest we can have while still being above the maximum network delay. We set the maximum delay to 0.26 seconds since we didn not want to add too much delay which would make the process slower.
+We set the minimum delay for 0 bit as 0.23 seconds as this is the lowest we can have while still being above the maximum network delay. We set the maximum delay to 0.26 seconds since we did not want to add too much delay which would make the process slower.
 
 We set the minumum delay for 1 bit as 0.5 as the threshold for detecting 0 bit can go up 0.47 and this is the lowest numbers we can assign while being above that range. We set the maximum delay to 0.51 seconds since we did not want to add too much delay which would make the process slower.
 

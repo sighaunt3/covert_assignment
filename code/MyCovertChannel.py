@@ -6,8 +6,7 @@ class MyCovertChannel(CovertChannelBase):
     
     """
     Covert Timing Channel that exploits Idle Period Between Packet Bursts using TCP [Code: CTC-IPPB-TCP]
-Responses: 0
-Limit: 1
+
     - You are not allowed to change the file name and class name.
     - You can edit the class in any way you want (e.g. adding helper functions); however, there must be a "send" and a "receive" function, the covert channel will be triggered by calling these functions.
     """
@@ -26,7 +25,7 @@ Limit: 1
         "whether bit is 0 or 1 delay is changed of the burst therefore on receiver side we can understand if its 0 or 1 based on the delay"
         "generates random number of packets for each bit and stores that many packets in the burst packets list once every packet is added to burst packet it sends it all together"
         
-        binary_message = self.generate_random_binary_message_with_logging("sender.log")
+        binary_message = self.generate_random_binary_message_with_logging("sender.log",16,16)
      
         start_time = time.time()
 
@@ -45,12 +44,12 @@ Limit: 1
             
 
         packet2 = IP(src=src_ip, dst=dst_ip)/TCP(dport=dst_port)
-        send(packet2)  #  send method from CovertChannelBase
+        send(packet2) 
         finish = time.time()
         print(len(binary_message)/(finish-start_time))
          
 
-    def receive(self, log_file_name, port, threshold_0_min, threshold_0_max, threshold_1_min, threshold_1_max):
+    def receive(self, log_file_name, port, threshold_0_min, threshold_0_max, threshold_1_min, threshold_1_max,src_ip,dst_ip):
         """
     This function receives and decodes a covert message transmitted over a network using timing differences between packets.
     - It captures packets on a specified port and processes them to determine if they represent a '0' or '1' based on timing thresholds.
@@ -65,33 +64,33 @@ Limit: 1
         def process_packet(packet):
             nonlocal last_time
             packet_string1 = ''
-            if packet.haslayer(TCP) and packet[IP].src == "172.18.0.2" and packet[IP].dst == "172.18.0.3":
-                current_time = packet.time
-                if last_time == 0:
-                    last_time = current_time
-                    return
+           
+            current_time = packet.time
+            if last_time == 0:
+                last_time = current_time
+                return
                 
-                difference = (current_time - last_time)
-                if threshold_0_min < difference < threshold_0_max:
-                    packets.append('0')
-                    last_time = current_time
-                    if(len(packets)== 8*self.i):
-                        message = ''.join(packets[8*(self.i-1):8*self.i])
-                        packet_string1 = ''.join(self.convert_eight_bits_to_character(message))
-                        self.i = self.i+1
-                    if(packet_string1== '.'):
-                        self.is_dot = True   
-                elif threshold_1_min < difference < threshold_1_max:
-                    packets.append('1')
-                    last_time = current_time
-                    if(len(packets)== 8*self.i):
-                        message = ''.join(packets[8*(self.i-1):8*self.i])
-                        packet_string1 = ''.join(self.convert_eight_bits_to_character(message))
-                        self.i = self.i+1
-                    if(packet_string1== '.'):
-                        self.is_dot = True 
-                else:
-                    last_time = current_time
+            difference = (current_time - last_time)
+            if threshold_0_min < difference < threshold_0_max:
+                packets.append('0')
+                last_time = current_time
+                if(len(packets)== 8*self.i):
+                    message = ''.join(packets[8*(self.i-1):8*self.i])
+                    packet_string1 = ''.join(self.convert_eight_bits_to_character(message))
+                    self.i = self.i+1
+                if(packet_string1== '.'):
+                    self.is_dot = True   
+            elif threshold_1_min < difference < threshold_1_max:
+                packets.append('1')
+                last_time = current_time
+                if(len(packets)== 8*self.i):
+                    message = ''.join(packets[8*(self.i-1):8*self.i])
+                    packet_string1 = ''.join(self.convert_eight_bits_to_character(message))
+                    self.i = self.i+1
+                if(packet_string1== '.'):
+                    self.is_dot = True 
+            else:
+                last_time = current_time
                 
                     
                 
@@ -99,12 +98,12 @@ Limit: 1
 
         sniff(
                 iface="eth0",
-                filter="tcp port 8000",
+                filter= f"tcp and src host {src_ip} and dst host {dst_ip} and port {port}",
                 prn=process_packet,stop_filter= lambda packet: self.is_dot )
         
         binary_message = ''.join(packets)
 
         packet_string = ''.join(self.convert_eight_bits_to_character(binary_message[i:i+8]) for i in range(0, len(binary_message), 8))
-        print(f"Binary message: {packet_string}")  # Debugging line to check the binary message
+        print(f"Binary message: {packet_string}")  
 
         self.log_message(packet_string, log_file_name)

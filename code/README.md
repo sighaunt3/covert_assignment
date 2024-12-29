@@ -25,6 +25,8 @@ In this function, the sender encodes the binary message by varying the idle time
 - delay_0_max: The maximum delay (in seconds) between bursts representing a '0' bit.
 - delay_1_min: The minimum delay (in seconds) between bursts representing a '1' bit.
 - delay_0_max: The maximum delay (in seconds) between bursts representing a '1' bit.
+- 0: representing the char 0.
+- 1: representing the char 1. 
 
 #### Process
 1. A binary message of random is generated and logged to the sender.log file.
@@ -48,6 +50,11 @@ In this function, the receiver decodes the transferred message by analyzing the 
 - threshold_0_max: The maximum threshold (in seconds) for detecting a '0' bit.
 - threshold_1_min: The minimum threshold (in seconds) for detecting a '1' bit.
 - threshold_1_max: The maximum threshold (in seconds) for detecting a '1' bit.
+- "src_ip": "172.18.0.2", The source IP address for the packets.
+- "dst_ip": "172.18.0.3", The destination IP address for the packets.
+- zero: representing the char 0
+- one: representing the char 1
+- dot: representing the terminating char.
 
 #### Process
 1. *Initialize Variables*: Initialize variables to store the packets, the last packet time and a flag to indicate when the dot character is received.
@@ -65,7 +72,7 @@ To measure the covert channel capacity, a binary message of length 128 bits (16 
 4. Calculate the time difference in seconds.
 5. Divide 128 by the calculated time in seconds to get the capacity in bits per second.
 
-The covert channel capacity is approximately *2.32 bits per second*.
+The covert channel capacity is approximately *2.22 bits per second*.
 
 ## Limitations
 - The minimum delay for sending a '0' bit is set to delay_0_min (0.23 seconds). While the maximum is set to delay_0_max (0.26 seconds).

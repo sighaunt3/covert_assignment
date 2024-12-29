@@ -16,7 +16,7 @@ class MyCovertChannel(CovertChannelBase):
         self.is_dot = False
         self.i = 1 
         
-    def send(self, log_file_name, src_ip, dst_ip, dst_port, min_packets, max_packets, delay_1_min, delay_1_max, delay_0_min, delay_0_max):
+    def send(self, log_file_name, src_ip, dst_ip, dst_port, min_packets, max_packets, delay_1_min, delay_1_max, delay_0_min, delay_0_max,zero,one):
         """
         - In this function, you expected to create a random message (using function/s in CovertChannelBase), and send it to the receiver container. Entire sending operations should be handled in this function.
         - After the implementation, please rewrite this comment part to explain your code basically.
@@ -37,9 +37,9 @@ class MyCovertChannel(CovertChannelBase):
                 packet = IP(src=src_ip, dst=dst_ip)/TCP(dport=dst_port)
                 burst_packets.append(packet)
             send(burst_packets,verbose =False)
-            if bit == '1':
+            if bit == one:
                 self.sleep_random_time_ms(delay_1_min, delay_1_max)
-            elif bit == '0':
+            elif bit == zero:
                 self.sleep_random_time_ms(delay_0_min, delay_0_max)
             
 
@@ -49,7 +49,7 @@ class MyCovertChannel(CovertChannelBase):
         print(len(binary_message)/(finish-start_time))
          
 
-    def receive(self, log_file_name, port, threshold_0_min, threshold_0_max, threshold_1_min, threshold_1_max,src_ip,dst_ip):
+    def receive(self, log_file_name, port, threshold_0_min, threshold_0_max, threshold_1_min, threshold_1_max,src_ip,dst_ip,dot,zero,one):
         """
     This function receives and decodes a covert message transmitted over a network using timing differences between packets.
     - It captures packets on a specified port and processes them to determine if they represent a '0' or '1' based on timing thresholds.
@@ -72,7 +72,7 @@ class MyCovertChannel(CovertChannelBase):
                 
             difference = (current_time - last_time)
             if threshold_0_min < difference < threshold_0_max:
-                packets.append('0')
+                packets.append(zero)
                 last_time = current_time
                 if(len(packets)== 8*self.i):
                     message = ''.join(packets[8*(self.i-1):8*self.i])
@@ -81,13 +81,13 @@ class MyCovertChannel(CovertChannelBase):
                 if(packet_string1== '.'):
                     self.is_dot = True   
             elif threshold_1_min < difference < threshold_1_max:
-                packets.append('1')
+                packets.append(one)
                 last_time = current_time
                 if(len(packets)== 8*self.i):
                     message = ''.join(packets[8*(self.i-1):8*self.i])
                     packet_string1 = ''.join(self.convert_eight_bits_to_character(message))
                     self.i = self.i+1
-                if(packet_string1== '.'):
+                if(packet_string1== dot):
                     self.is_dot = True 
             else:
                 last_time = current_time
